@@ -3,11 +3,12 @@
 import pygame
 from pygame.locals import *
 import os
-import math
+from math import *
 from monstre import *
 from personnage import *
 
 pygame.init()
+pygame.key.set_repeat(80, 22)
 
 win = pygame.display.set_mode((1280,720), FULLSCREEN)
 fondmenu = pygame.image.load("TEXTURES/menu principal.jpg")
@@ -104,32 +105,63 @@ class play():
     rectPlayer_w = 13
     rectPlayer_h = 34
     rectBalle_x = 0
-    rectBalle_y = 5
+    rectBalle_y = 0
     rectBalle_w = 5
     rectBalle_h = 3
+    playerVitess_x = 0
+    playerVitess_y = 0
+    vitesseBalle_x = 0
+    vitesseBalle_y = 0
     orientation = "Defaut"
     niveau = 1
     continuer = True
-
+    alpha = 0
 
 
 
 
 
     while continuer == True:
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        mouse_x, mouse_y = mouse_x, mouse_y
         for event in pygame.event.get():
             if event.type == QUIT:
                 continuer = False
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     continuer = False
-        mouse_x, mouse_y = pygame.mouse.get_pos()
+            if event.type == MOUSEBUTTONDOWN and event.button == 1:
+                alpha = asin((mouse_x - rectPlayer_x)/(sqrt((rectPlayer_x - mouse_x)**2+(rectPlayer_y - mouse_y)**2))) - (pi / 2)
+                vitesseBalle_x = cos(alpha)*10
+                vitesseBalle_y = sin(alpha)*10
+                rectBalle_x, rectBalle_y = rectPlayer_x, rectPlayer_y
+            if event.type == KEYDOWN:
+                if event.key == K_UP and rectPlayer_y + rectPlayer_h - 1 >= pygame.display.Info().current_h:
+                    playerVitess_y = 4
+                if event.key == K_RIGHT or event.key == K_g:
+                    playerVitess_x += 1.2
+                    orientation = "Droite"
+                if event.key == K_LEFT or event.key == K_d:
+                    playerVitess_x -= 1.2
+                    orientation = "Gauche"
+                if event.key != K_LEFT or event.key != K_d and event.key != K_RIGHT or event.key != K_g:
+                    orientation = "Defaut"
 
+        rectPlayer_x += playerVitess_x
+        rectPlayer_y += playerVitess_y
+        rectBalle_x += vitesseBalle_x
+        rectBalle_y += vitesseBalle_y
+        playerVitess_x = playerVitess_x / 1.25
+        if rectPlayer_y + rectPlayer_h <= pygame.display.Info().current_h:
+            playerVitess_y += 0.75
+        else:
+            playerVitess_y = 0
+            rectPlayer_y = pygame.display.Info().current_h - rectPlayer_h
 
-
+        pygame.transform.rotate(balle, degrees(alpha))
         ffond(niveau)
         win.blit(balle, (rectBalle_x-(rectBalle_w/2), rectBalle_y-(rectBalle_h/2)))
-        win.blit(viseur, (mouse_x,mouse_y))
+        win.blit(viseur, (mouse_x-(cursor_w/2),mouse_y-(cursor_h/2)))
         if orientation == "Defaut":
             win.blit(personnage, (rectPlayer_x,rectPlayer_y))
         if orientation == "Droite":
