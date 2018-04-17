@@ -23,24 +23,13 @@ logo = pygame.image.load("TEXTURES/Logo.png").convert_alpha()
 viseur = pygame.image.load("TEXTURES/Viseur.png").convert_alpha()
 balle = pygame.image.load("TEXTURES/Balle.png").convert_alpha()
 
-def ffond(niveau):
-    if niveau == 1 or niveau == 2:
-        win.blit(level1, (0,0))
-    if niveau == 3:
-        win.blit(level3, (0,0))
-    if niveau == 4:
-        win.blit(level4, (0,0))
-    if niveau == 5:
-        win.blit(level5, (0,0))
-    if niveau == 6:
-        win.blit(level6, (0,0))
-    if niveau == 7:
-        win.blit(level7, (0,0))
-    if niveau == 8:
-        win.blit(level8, (0,0))
-    if niveau == 9:
-        win.blit(level9, (0,0))
-    pass
+
+
+
+
+
+
+
 
 class menu():
 
@@ -98,27 +87,68 @@ class menu():
 
 class play():
 
+    global rectBalle_w, rectBalle_h
+    global BallesPos_x, BallesPos_y
+    global vitesseBalle_x, vitesseBalle_y
+    global alpha
     cursor_w = 54
     cursor_h = 54
     rectPlayer_x = 20
     rectPlayer_y = 20
     rectPlayer_w = 13
     rectPlayer_h = 34
-    rectBalle_x = 0
-    rectBalle_y = 0
+
     rectBalle_w = 5
     rectBalle_h = 3
     playerVitess_x = 0
     playerVitess_y = 0
-    vitesseBalle_x = 0
-    vitesseBalle_y = 0
     orientation = "Defaut"
     niveau = 1
     continuer = True
-    alpha = 0
+    i = 0
+    BallesPos_x = []
+    BallesPos_y = []
+    vitesseBalle_x = []
+    vitesseBalle_y = []
+    alpha = []
+
+    def ffond(niveau):
+        if niveau == 1 or niveau == 2:
+            win.blit(level1, (0,0))
+        if niveau == 3:
+            win.blit(level3, (0,0))
+        if niveau == 4:
+            win.blit(level4, (0,0))
+        if niveau == 5:
+            win.blit(level5, (0,0))
+        if niveau == 6:
+            win.blit(level6, (0,0))
+        if niveau == 7:
+            win.blit(level7, (0,0))
+        if niveau == 8:
+            win.blit(level8, (0,0))
+        if niveau == 9:
+            win.blit(level9, (0,0))
+        pass
 
 
+    for i in range(0, 100):
+        BallesPos_x.append(0)
+        BallesPos_y.append(0)
+        vitesseBalle_x.append(0)
+        vitesseBalle_y.append(0)
+        alpha.append(0)
+        pass
 
+
+    def fafficherBalle():
+        for elt in range(0, 100):
+            BallesPos_x[elt] += vitesseBalle_x[elt]
+            BallesPos_y[elt] += vitesseBalle_y[elt]
+            win.blit(balle, (BallesPos_x[elt]-(rectBalle_w/2),BallesPos_y[elt]-(rectBalle_h/2)))
+            pygame.transform.rotate(balle, degrees(alpha[elt]))
+            pass
+        pass
 
 
     while continuer == True:
@@ -131,10 +161,12 @@ class play():
                 if event.key == K_ESCAPE:
                     continuer = False
             if event.type == MOUSEBUTTONDOWN and event.button == 1:
-                alpha = asin((mouse_x - rectPlayer_x)/(sqrt((rectPlayer_x - mouse_x)**2+(rectPlayer_y - mouse_y)**2))) - (pi / 2)
-                vitesseBalle_x = cos(alpha)*10
-                vitesseBalle_y = sin(alpha)*10
-                rectBalle_x, rectBalle_y = rectPlayer_x, rectPlayer_y
+                i += 1
+                print(i)
+                alpha[i] = asin((mouse_x - rectPlayer_x)/(sqrt((rectPlayer_x - mouse_x)**2+(rectPlayer_y - mouse_y)**2))) - (pi / 2)
+                vitesseBalle_x[i] = cos(alpha[i])*10
+                vitesseBalle_y[i] = sin(alpha[i])*10
+                BallesPos_x[i], BallesPos_y[i] = rectPlayer_x, rectPlayer_y
             if event.type == KEYDOWN:
                 if event.key == K_UP and rectPlayer_y + rectPlayer_h - 1 >= pygame.display.Info().current_h:
                     playerVitess_y = 4
@@ -149,8 +181,6 @@ class play():
 
         rectPlayer_x += playerVitess_x
         rectPlayer_y += playerVitess_y
-        rectBalle_x += vitesseBalle_x
-        rectBalle_y += vitesseBalle_y
         playerVitess_x = playerVitess_x / 1.25
         if rectPlayer_y + rectPlayer_h <= pygame.display.Info().current_h:
             playerVitess_y += 0.75
@@ -158,9 +188,9 @@ class play():
             playerVitess_y = 0
             rectPlayer_y = pygame.display.Info().current_h - rectPlayer_h
 
-        pygame.transform.rotate(balle, degrees(alpha))
+
         ffond(niveau)
-        win.blit(balle, (rectBalle_x-(rectBalle_w/2), rectBalle_y-(rectBalle_h/2)))
+        fafficherBalle()
         win.blit(viseur, (mouse_x-(cursor_w/2),mouse_y-(cursor_h/2)))
         if orientation == "Defaut":
             win.blit(personnage, (rectPlayer_x,rectPlayer_y))
@@ -170,7 +200,9 @@ class play():
             win.blit(personnageG, (rectPlayer_x,rectPlayer_y))
             win.blit(viseur, (mouse_x-(cursor_w/2),mouse_y-(cursor_h/2)))
         pygame.display.flip()
-
+        if i >= 99:
+            i = 0
+            pass
         pass
 
     pass
