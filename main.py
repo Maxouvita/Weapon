@@ -7,6 +7,7 @@ from math import *
 from monstre import *
 from personnage import *
 
+
 pygame.init()
 pygame.key.set_repeat(80, 22)
 
@@ -22,17 +23,24 @@ bulleJouer = pygame.image.load("TEXTURES/Bulle Jouer.png").convert_alpha()
 logo = pygame.image.load("TEXTURES/Logo.png").convert_alpha()
 viseur = pygame.image.load("TEXTURES/Viseur.png").convert_alpha()
 balle = pygame.image.load("TEXTURES/Balle.png").convert_alpha()
+boutoncomp = pygame.image.load("TEXTURES/boutoncomp.jpg").convert_alpha()
+fondc = pygame.image.load("TEXTURES/Fond.jpg")
 
 
-
-
-
-
-
-
-
+def arbrecomp():
+    arbre = True
+    while arbre == True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                arbre = False
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    arbre = False
+        win.blit(fondc,(0,0))
+        pygame.display.flip()
+        pass
+    pass
 class menu():
-
 
     continuer = True
     mouse_x, mouse_y = 0, 0
@@ -41,6 +49,11 @@ class menu():
     boutonPlay_y = 220
     boutonPlay_w = 330
     boutonPlay_h = 132
+
+    boutoncomp_x = 565
+    boutoncomp_y = 400
+    boutoncomp_w = 184
+    boutoncomp_h = 184
 
     bullePlay_x = 390
     bullePlay_y = boutonPlay_y+15
@@ -69,9 +82,13 @@ class menu():
             if event.type == MOUSEBUTTONUP and event.button == 1:
                 if mouse_x > boutonPlay_x and mouse_x < boutonPlay_x+boutonPlay_w and mouse_y > boutonPlay_y and mouse_y < boutonPlay_y+boutonPlay_y:
                     continuer = False
+            if event.type == MOUSEBUTTONUP and event.button == 1:
+                if mouse_x > boutoncomp_x and mouse_x < boutoncomp_x+boutoncomp_w and mouse_y > boutoncomp_y and mouse_y < boutoncomp_y+boutoncomp_y:
+                    arbrecomp()
             pass
 
         win.blit(fondmenu, (0,0))
+        win.blit(boutoncomp, (boutoncomp_x,boutoncomp_y))
         win.blit(boutonJouer, (boutonPlay_x,boutonPlay_y))
         win.blit(logo, (logo_x,logo_y))
         if mouse_x > boutonPlay_x and mouse_x < boutonPlay_x + boutonPlay_w and mouse_y > boutonPlay_y and mouse_y < boutonPlay_y + boutonPlay_h:
@@ -82,7 +99,6 @@ class menu():
 
         continue
     pass
-
 
 
 class play():
