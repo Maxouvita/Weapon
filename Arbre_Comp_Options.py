@@ -20,7 +20,7 @@ class Arbre_Comp_Options():
         """ Commentaire """
 
         
-
+        win = pygame.display.set_mode((1280,720), FULLSCREEN)
         fondc = pygame.image.load("TEXTURES/Fond.jpg").convert_alpha()
 
         arbre = True
